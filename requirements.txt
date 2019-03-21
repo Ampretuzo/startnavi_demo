@@ -5,4 +5,5 @@
 #    pip-compile requirements.in
 #
 django==2.1.7
+djangorestframework==3.9.2
 pytz==2018.9              # via django
