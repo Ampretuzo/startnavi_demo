@@ -1,2 +1,6 @@
 Django==2.1.7
 djangorestframework==3.9.2
+
+# dev requirements:
+pip-tools==3.5.0
+pre-commit==1.14.4
