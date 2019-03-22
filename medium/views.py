@@ -1,14 +1,16 @@
-from rest_framework import generics
-from rest_framework import permissions
+from rest_framework import viewsets
+
+from dry_rest_permissions.generics import DRYPermissions
+
 
 from . import models
 from .serializers import PostSerializer
 
 
-class PostListCreate(generics.ListCreateAPIView):
+class PostModelViewSet(viewsets.ModelViewSet):
     queryset = models.Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (DRYPermissions,)
 
     def perform_create(self, serializer):
         user = self.request.user

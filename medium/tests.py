@@ -9,6 +9,7 @@ from . import models
 
 class PostTests(APITestCase):
     post_create_url = reverse("post-list")
+    post_list_url = reverse("post-list")
 
     @classmethod
     def setUpTestData(cls):
@@ -20,6 +21,10 @@ class PostTests(APITestCase):
     def test_creating_post_with_unauthenticated_user_should_return_401(self):
         response = self.client.post(self.post_create_url, {})
         self.assertEqual(status.HTTP_401_UNAUTHORIZED, response.status_code)
+
+    def test_list_posts_with_unauthenticated_user_should_return_200(self):
+        response = self.client.get(self.post_list_url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_creating_post_with_authenticated_user_shoud_return_201(self):
         self.client.force_authenticate(user=self.test_user)

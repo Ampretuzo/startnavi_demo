@@ -21,6 +21,18 @@ class Post(models.Model):
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        return False
+
+    @staticmethod
+    def has_create_permission(request):
+        return request.user.is_authenticated
+
     class Meta:
         db_table = "medium_post"
 
