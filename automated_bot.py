@@ -1,8 +1,14 @@
+"""NOTE: the script does not provide any error handling and it will fail
+un-gracefully after a single exception. E.g. registering two users with same 'jack342' username by chance will
+kill the script midway."""
+
+
 import argparse
 import configparser
 import requests
 import random
 import string
+from itertools import chain
 
 from faker import Faker
 
@@ -14,9 +20,12 @@ class SimpleApiClient:
     def __init__(self, url_base=URL_BASE):
         self.url_base = url_base
 
+    def _authorization_header(self, jwt_token):
+        return string.Template("Bearer $token").substitute(token=jwt_token)
+
     def register_user(self, user_registration_data):
         response = requests.post(
-            URL_BASE + "auth/register/", json=user_registration_data
+            self.url_base + "auth/register/", json=user_registration_data
         )
         if response.status_code == 201:
             return response.json()
@@ -24,7 +33,8 @@ class SimpleApiClient:
 
     def log_in(self, username, password):
         response = requests.post(
-            URL_BASE + "auth/token/", json={"username": username, "password": password}
+            self.url_base + "auth/token/",
+            json={"username": username, "password": password},
         )
         if response.status_code == 200:
             return response.json()
@@ -32,32 +42,42 @@ class SimpleApiClient:
 
     def create_post(self, title, text, jwt_token):
         response = requests.post(
-            URL_BASE + "posts/",
+            self.url_base + "posts/",
             json={"title": title, "text": text},
-            headers={
-                "Authorization": string.Template("Bearer $token").substitute(
-                    token=jwt_token
-                )
-            },
+            headers={"Authorization": self._authorization_header(jwt_token)},
         )
         if response.status_code == 201:
             return response.json()
         raise Exception("Creating post failed for some reason")
 
+    def like_post(self, post_id_to_like, jwt_token):
+        relative_path = string.Template("posts/$post_id/like/").substitute(
+            post_id=post_id_to_like
+        )
+        response = requests.post(
+            self.url_base + relative_path,
+            headers={"Authorization": self._authorization_header(jwt_token)},
+        )
+        if response.status_code == 200:
+            return
+        raise Exception("Could not like the post for some reason")
+
+
+def _random_string(len, characters):
+    return "".join(random.choice(characters) for _ in range(len))
+
 
 def _random_alphanumeric_string(len=10):
-    characters = string.ascii_letters + string.digits
-    return "".join(random.choice(characters) for i in range(len))
+    return _random_string(len, string.ascii_letters + string.digits)
 
 
 def _random_numeric_string(len=3):
-    characters = string.digits
-    return "".join(random.choice(characters) for _ in range(len))
+    return _random_string(len, string.digits)
 
 
 def _generate_user_data(number_of_users, faker):
     fake_username = lambda: faker.name().split(" ")[0].lower() + _random_numeric_string(
-        len=2
+        len=4
     )
     fake_usernames = [fake_username() for _ in range(number_of_users)]
     return [
@@ -83,7 +103,7 @@ def _log_users_in(registered_users, simple_api_client):
 
 def _generate_posts(registered_users, max_posts_per_user, faker):
     for registered_user in registered_users:
-        posts = [
+        registered_user["posts"] = [
             {
                 "data": {
                     "title": " ".join(faker.text().split()[:3]),
@@ -92,7 +112,6 @@ def _generate_posts(registered_users, max_posts_per_user, faker):
             }
             for _ in range(max_posts_per_user)
         ]
-        registered_user["posts"] = posts
 
 
 def _upload_posts(registered_users, simple_api_client):
@@ -110,6 +129,27 @@ def _upload_posts(registered_users, simple_api_client):
         ]
 
 
+def _all_post_ids(registered_users):
+    return list(
+        chain(
+            *[
+                [post["id"] for post in registered_user["posts"]]
+                for registered_user in registered_users
+            ]
+        )
+    )
+
+
+def _like_posts(registered_users, max_likes_per_user, simple_api_client):
+    all_post_ids = _all_post_ids(registered_users)
+    for registered_user in registered_users:
+        post_ids_to_like = random.sample(population=all_post_ids, k=max_likes_per_user)
+        for post_id_to_like in post_ids_to_like:
+            simple_api_client.like_post(
+                post_id_to_like, registered_user["token_pair"]["access"]
+            )
+
+
 def run_automated_bot(
     faker, simple_api_client, number_of_users, max_posts_per_user, max_likes_per_user
 ):
@@ -124,6 +164,7 @@ def run_automated_bot(
     _log_users_in(registered_users, simple_api_client)
     _generate_posts(registered_users, max_posts_per_user, faker)
     _upload_posts(registered_users, simple_api_client)
+    _like_posts(registered_users, max_likes_per_user, simple_api_client)
 
 
 def main():
