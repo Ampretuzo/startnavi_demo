@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # Messages app not needed for REST API projects
     # 'django.contrib.messages',
     "django.contrib.staticfiles",
+    "rest_framework",
     "medium",
 ]
 
@@ -118,3 +119,11 @@ STATIC_URL = "/static/"
 # Specifying custom user model is recommended when starting a new project - saves migration headaches later
 
 AUTH_USER_MODEL = "medium.User"
+
+# DRF
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
+}
