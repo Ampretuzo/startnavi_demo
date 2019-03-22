@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
 
+from .exceptions import PostAlreadyLiked
+
+
 class User(AbstractUser):
     class Meta:
         db_table = "medium_user"
@@ -22,8 +25,9 @@ class Post(models.Model):
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     def like(self, user_profile):
-        # TODO
-        pass
+        if self.like_set.count() > 0:
+            raise PostAlreadyLiked()
+        self.like_set.create(user_profile=user_profile)
 
     @staticmethod
     def has_read_permission(request):

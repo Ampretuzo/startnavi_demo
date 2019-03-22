@@ -96,8 +96,8 @@ class PostLikeTests(APITestCase):
         response = self.client.post(self.post_toggle_like_url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
-    # def test_liking_post_second_time_should_return_400(self):
-    #     self.client.force_authenticate(user=self.test_user)
-    #     self.client.post(self.post_toggle_like_url)
-    #     response = self.client.post(self.post_toggle_like_url)
-    #     self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+    def test_liking_post_second_time_should_return_400(self):
+        self.client.force_authenticate(user=self.test_user)
+        self.client.post(self.post_toggle_like_url)
+        response = self.client.post(self.post_toggle_like_url)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
