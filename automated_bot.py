@@ -30,6 +30,20 @@ class SimpleApiClient:
             return response.json()
         raise Exception("Login failed for some reason")
 
+    def create_post(self, title, text, jwt_token):
+        response = requests.post(
+            URL_BASE + "posts/",
+            json={"title": title, "text": text},
+            headers={
+                "Authorization": string.Template("Bearer $token").substitute(
+                    token=jwt_token
+                )
+            },
+        )
+        if response.status_code == 201:
+            return response.json()
+        raise Exception("Creating post failed for some reason")
+
 
 def _random_alphanumeric_string(len=10):
     characters = string.ascii_letters + string.digits
@@ -67,9 +81,39 @@ def _log_users_in(registered_users, simple_api_client):
         registered_user["token_pair"] = token_pair
 
 
-def run_automated_bot(faker, number_of_users, max_posts_per_user, max_likes_per_user):
+def _generate_posts(registered_users, max_posts_per_user, faker):
+    for registered_user in registered_users:
+        posts = [
+            {
+                "data": {
+                    "title": " ".join(faker.text().split()[:3]),
+                    "text": faker.text(),
+                }
+            }
+            for _ in range(max_posts_per_user)
+        ]
+        registered_user["posts"] = posts
+
+
+def _upload_posts(registered_users, simple_api_client):
+    for registered_user in registered_users:
+        registered_user["posts"] = [
+            {
+                "id": simple_api_client.create_post(
+                    post["data"]["title"],
+                    post["data"]["text"],
+                    registered_user["token_pair"]["access"],
+                )["id"],
+                "data": post["data"],
+            }
+            for post in registered_user["posts"]
+        ]
+
+
+def run_automated_bot(
+    faker, simple_api_client, number_of_users, max_posts_per_user, max_likes_per_user
+):
     user_registration_data_list = _generate_user_data(number_of_users, faker)
-    simple_api_client = SimpleApiClient()
     registered_users = [
         {
             "user_id": simple_api_client.register_user(user_registration_data)["id"],
@@ -78,6 +122,8 @@ def run_automated_bot(faker, number_of_users, max_posts_per_user, max_likes_per_
         for user_registration_data in user_registration_data_list
     ]
     _log_users_in(registered_users, simple_api_client)
+    _generate_posts(registered_users, max_posts_per_user, faker)
+    _upload_posts(registered_users, simple_api_client)
 
 
 def main():
@@ -91,7 +137,13 @@ def main():
     max_posts_per_user = int(config.get("Basic Params", "max_posts_per_user"))
     max_likes_per_user = int(config.get("Basic Params", "max_likes_per_user"))
 
-    run_automated_bot(Faker(), number_of_users, max_posts_per_user, max_likes_per_user)
+    run_automated_bot(
+        Faker(),
+        SimpleApiClient(),
+        number_of_users,
+        max_posts_per_user,
+        max_likes_per_user,
+    )
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from . import models
 
 @receiver(djoser_signals.user_registered, sender=djoser_views.UserCreateView)
 def user_registered(user, request, **kwargs):
+    models.UserProfile.objects.create(user=user)
     """TODO: implement enrichment using Celery
     Right now, I'm using blocking api for simplicity"""
     # email = user.email
