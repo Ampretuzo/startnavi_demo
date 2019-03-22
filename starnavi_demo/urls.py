@@ -13,26 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
-
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-
-from djoser.views import UserCreateView as DjoserUserCreateView
-
-from medium import views as medium_views
+# from django.contrib import admin
+from django.urls import path, include
 
 
-post_view = medium_views.PostModelViewSet.as_view({"get": "list", "post": "create"})
-like_view = medium_views.PostModelViewSet.as_view({"post": "like"})
-unlike_view = medium_views.PostModelViewSet.as_view({"post": "unlike"})
-
-urlpatterns = [
-    # path('admin/', admin.site.urls),
-    path("api/auth/register", DjoserUserCreateView.as_view(), name="register"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/posts/<int:pk>/like/", like_view, name="post-like"),
-    path("api/posts/<int:pk>/unlike/", unlike_view, name="post-unlike"),
-    path("api/posts/", post_view, name="post-list"),
-]
+urlpatterns = [path("api/", include("medium.urls"))]
