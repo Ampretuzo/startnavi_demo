@@ -5,3 +5,4 @@ djangorestframework-simplejwt==4.1.0
 # dev requirements:
 pip-tools==3.5.0
 pre-commit==1.14.4
+pudb==2018.1
