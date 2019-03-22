@@ -29,7 +29,7 @@ unlike_view = medium_views.PostModelViewSet.as_view({"post": "unlike"})
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path("api/auth/register", DjoserUserCreateView.as_view(), name="register"),
+    path("api/auth/register/", DjoserUserCreateView.as_view(), name="register"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/posts/<int:pk>/like/", like_view, name="post-like"),
