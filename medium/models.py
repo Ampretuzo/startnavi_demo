@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 from .exceptions import PostAlreadyLiked, LikeNotFound
 
 
 class User(AbstractUser):
+    email = models.EmailField(_("email address"), blank=False, unique=True)
+
     class Meta:
         db_table = "medium_user"
 
