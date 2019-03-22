@@ -21,7 +21,7 @@ class Post(models.Model):
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
-    def toggle_like(self, user_profile):
+    def like(self, user_profile):
         # TODO
         pass
 
@@ -38,10 +38,10 @@ class Post(models.Model):
         return request.user.is_authenticated
 
     @staticmethod
-    def has_toggle_like_permission(request):
+    def has_like_permission(request):
         return True
 
-    def has_object_toggle_like_permission(self, request):
+    def has_object_like_permission(self, request):
         return request.user.is_authenticated
 
     class Meta:

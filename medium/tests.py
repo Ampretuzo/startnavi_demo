@@ -81,7 +81,7 @@ class PostLikeTests(APITestCase):
         post = models.Post.objects.create(
             title="The Title 1", text="The Text 1", author=test_user_profile
         )
-        self.post_toggle_like_url = reverse("toggle-like", args=(post.id,))
+        self.post_toggle_like_url = reverse("post-like", args=(post.id,))
 
     def test_liking_post_with_unauthenticated_user_should_return_401(self):
         response = self.client.post(self.post_toggle_like_url)
@@ -95,3 +95,9 @@ class PostLikeTests(APITestCase):
         self.client.force_authenticate(user=self.test_user)
         response = self.client.post(self.post_toggle_like_url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    # def test_liking_post_second_time_should_return_400(self):
+    #     self.client.force_authenticate(user=self.test_user)
+    #     self.client.post(self.post_toggle_like_url)
+    #     response = self.client.post(self.post_toggle_like_url)
+    #     self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)

@@ -14,12 +14,17 @@ class PostModelViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = (DRYPermissions,)
 
-    @detail_route(methods=("POST",))
-    def toggle_like(self, request, pk):
+    # @detail_route(methods=("POST",))
+    def like(self, request, pk):
         post = self.get_object()
         user = self.request.user
-        post.toggle_like(user_profile=user.userprofile)
+        post.like(user_profile=user.userprofile)
         return Response()
+
+    # @detail_route(methods=("POST",))
+    def unlike(self, request, pk):
+        post = self.get_object()
+        raise NotImplementedError("Unlike not implemented")
 
     def perform_create(self, serializer):
         user = self.request.user
