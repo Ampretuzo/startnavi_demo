@@ -76,15 +76,12 @@ class PostLikeTests(APITestCase):
     post_list_url = reverse("post-list")
 
     def setUp(self):
-        test_user = get_user_model().objects.get_or_create(username="testuser")[0]
-        test_user_profile = models.UserProfile.objects.create(user=test_user)
-        self.client.force_authenticate(user=test_user)
-        self.client.post(
-            self.post_create_url, {"title": "The Title 1", "text": "The Text 1"}
+        self.test_user = get_user_model().objects.get_or_create(username="testuser")[0]
+        test_user_profile = models.UserProfile.objects.create(user=self.test_user)
+        post = models.Post.objects.create(
+            title="The Title 1", text="The Text 1", author=test_user_profile
         )
-        posts = self.client.get(self.post_list_url)
-        post_id = posts.data[0]["id"]
-        self.post_toggle_like_url = reverse("toggle-like", args=(post_id,))
+        self.post_toggle_like_url = reverse("toggle-like", args=(post.id,))
 
     def test_liking_post_with_unauthenticated_user_should_return_401(self):
         response = self.client.post(self.post_toggle_like_url)
@@ -93,3 +90,8 @@ class PostLikeTests(APITestCase):
             response.status_code
             in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
         )
+
+    def test_liking_post_with_authenticated_user_should_return_200(self):
+        self.client.force_authenticate(user=self.test_user)
+        response = self.client.post(self.post_toggle_like_url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
