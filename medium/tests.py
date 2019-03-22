@@ -169,3 +169,14 @@ class RegistrationTestdrive(APITestCase):
             {"username": "testuser", "password": "testuserpassword"},
         )
         self.assertTrue("eyJ" in response.data["access"])
+
+    # def test_tmp(self):
+    #     self.client.post(
+    #         self.register_url,
+    #         {
+    #             "username": "testuser",
+    #             "password": "testuserpassword",
+    #             "email": "testuser@testdomain.com",
+    #         },
+    #     )
+    #     import pudb; pudb.set_trace()
