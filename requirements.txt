@@ -16,6 +16,7 @@ djangorestframework-simplejwt==4.1.0
 djangorestframework==3.9.2
 djoser==1.5.0
 dry-rest-permissions==0.1.10
+faker==1.0.4
 identify==1.4.0           # via pre-commit
 idna==2.8                 # via requests
 importlib-metadata==0.8   # via pre-commit
@@ -25,10 +26,12 @@ pre-commit==1.14.4
 pudb==2018.1
 pygments==2.3.1           # via pudb
 pyjwt==1.7.1              # via djangorestframework-simplejwt
+python-dateutil==2.8.0    # via faker
 pytz==2018.9              # via django
 pyyaml==5.1               # via aspy.yaml, pre-commit
 requests==2.21.0          # via clearbit
-six==1.12.0               # via cfgv, pip-tools, pre-commit
+six==1.12.0               # via cfgv, faker, pip-tools, pre-commit, python-dateutil
+text-unidecode==1.2       # via faker
 toml==0.10.0              # via pre-commit
 urllib3==1.24.1           # via requests
 urwid==2.0.1              # via pudb

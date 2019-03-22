@@ -45,12 +45,12 @@ class Post(models.Model):
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     def like(self, user_profile):
-        if self.like_set.count() > 0:
+        if self.like_set.filter(user_profile=user_profile).count() > 0:
             raise PostAlreadyLiked()
         self.like_set.create(user_profile=user_profile)
 
     def unlike(self, user_profile):
-        if self.like_set.count() == 0:
+        if self.like_set.filter(user_profile=user_profile).count() == 0:
             raise LikeNotFound()
         self.like_set.filter(user_profile=user_profile).delete()
 
