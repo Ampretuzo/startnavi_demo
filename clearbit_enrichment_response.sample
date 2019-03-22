@@ -1,0 +1,165 @@
+>>> import clearbit
+>>> clearbit.key = 'sk_5ff0b5996e406f86420effe7d8d00a18'
+>>> response = clearbit.Enrichment.find(email='alex@clearbit.com', stream=True)
+
+{
+  'person': {
+    'id': '3622a31e-7d4c-41bf-a422-65b36b4a401d',
+    'name': {
+      'fullName': 'Alex MacCaw',
+      'givenName': 'Alex',
+      'familyName': 'MacCaw'
+    },
+    'email': 'alex@clearbit.com',
+    'location': 'San Francisco, CA, US',
+    'timeZone': 'America/Los_Angeles',
+    'utcOffset': -7,
+    'geo': {
+      'city': 'San Francisco',
+      'state': 'California',
+      'stateCode': 'CA',
+      'country': 'United States',
+      'countryCode': 'US',
+      'lat': 37.7749295,
+      'lng': -122.4194155
+    },
+    'bio': '@clearbit co-founder and CEO. Tea, Earl Grey, hot.',
+    'site': 'http://alexmaccaw.com',
+    'avatar': 'https://d1ts43dypk8bqh.cloudfront.net/v1/avatars/3622a31e-7d4c-41bf-a422-65b36b4a401d',
+    'employment': {
+      'domain': 'clearbit.com',
+      'name': 'Clearbit',
+      'title': 'Co-founder, CEO',
+      'role': 'leadership',
+      'subRole': 'ceo',
+      'seniority': 'executive'
+    },
+    'facebook': {
+      'handle': 'amaccaw'
+    },
+    'github': {
+      'handle': 'maccman',
+      'id': 2142,
+      'avatar': 'https://avatars2.githubusercontent.com/u/2142?v=4',
+      'company': 'Clearbit',
+      'blog': 'http://alexmaccaw.com',
+      'followers': 3553,
+      'following': 107
+    },
+    'twitter': {
+      'handle': 'maccaw',
+      'id': 2006261,
+      'bio': '@clearbit co-founder and CEO. Tea, Earl Grey, hot.',
+      'followers': 19835,
+      'following': 2233,
+      'statuses': 10426,
+      'favorites': 8818,
+      'location': 'San Francisco',
+      'site': 'http://alexmaccaw.com',
+      'avatar': 'https://pbs.twimg.com/profile_images/918603761861328896/MSXrAULz.jpg'
+    },
+    'linkedin': {
+      'handle': 'in/alex-maccaw-ab592978'
+    },
+    'googleplus': {
+      'handle': None
+    },
+    'gravatar': {
+      'handle': 'maccman',
+      'urls': [{
+        'value': 'http://alexmaccaw.com',
+        'title': 'Personal Website'
+      }],
+      'avatar': 'https://secure.gravatar.com/avatar/994909da96d3afaf4daaf54973914b64',
+      'avatars': [{
+        'url': 'https://secure.gravatar.com/avatar/994909da96d3afaf4daaf54973914b64',
+        'type': 'thumbnail'
+      }]
+    },
+    'fuzzy': False,
+    'emailProvider': False,
+    'indexedAt': '2019-02-27T18:36:10.317Z'
+  },
+  'company': {
+    'id': 'a114c279-67aa-4faa-beaf-64246a856450',
+    'name': 'Clearbit',
+    'legalName': 'APIHub, Inc',
+    'domain': 'clearbit.com',
+    'domainAliases': ['clearbit.co', 'clearbit.net', 'clearbit.ca'],
+    'site': {
+      'phoneNumbers': ['+1 415-805-3400', '+1 916-445-1254', '+1 800-952-5210'],
+      'emailAddresses': ['alex@clearbit.com', 'bonnie@clearbit.com', 'success@clearbit.com', 'support@clearbit.com']
+    },
+    'category': {
+      'sector': 'Information Technology',
+      'industryGroup': 'Software & Services',
+      'industry': 'Internet Software & Services',
+      'subIndustry': 'Internet Software & Services',
+      'sicCode': '48',
+      'naicsCode': '51'
+    },
+    'tags': ['Information Technology & Services', 'Technology', 'SAAS', 'B2B'],
+    'description': 'Clearbit provides powerful products and data APIs to help your business grow. Contact enrichment, lead generation, financial compliance, and more...',
+    'foundedYear': None,
+    'location': '90 Sheridan St, San Francisco, CA 94103, USA',
+    'timeZone': 'America/Los_Angeles',
+    'utcOffset': -7,
+    'geo': {
+      'streetNumber': '90',
+      'streetName': 'Sheridan Street',
+      'subPremise': None,
+      'city': 'San Francisco',
+      'postalCode': '94103',
+      'state': 'California',
+      'stateCode': 'CA',
+      'country': 'United States',
+      'countryCode': 'US',
+      'lat': 37.77219420000001,
+      'lng': -122.4118037
+    },
+    'logo': 'https://logo.clearbit.com/clearbit.com',
+    'facebook': {
+      'handle': 'clearbitinc',
+      'likes': 10906
+    },
+    'linkedin': {
+      'handle': 'company/clearbit'
+    },
+    'twitter': {
+      'handle': 'clearbit',
+      'id': '2857311332',
+      'bio': 'Clearbit is the marketing data engine for all of your customer interactions. Send questions to support@clearbit.com.',
+      'followers': 2476,
+      'following': 118,
+      'location': 'San Francisco',
+      'site': 'https://t.co/r06mCbdPuR',
+      'avatar': 'https://pbs.twimg.com/profile_images/885174521090646017/boQMtD4j_normal.jpg'
+    },
+    'crunchbase': {
+      'handle': 'organization/clearbit'
+    },
+    'emailProvider': False,
+    'type': 'private',
+    'ticker': None,
+    'identifiers': {
+      'usEIN': None
+    },
+    'phone': '+1 415-805-3400',
+    'metrics': {
+      'alexaUsRank': 19718,
+      'alexaGlobalRank': 61418,
+      'employees': 47,
+      'employeesRange': '11-50',
+      'marketCap': None,
+      'raised': 3000000,
+      'annualRevenue': None,
+      'estimatedAnnualRevenue': '$1M-$10M',
+      'fiscalYearEnd': None
+    },
+    'indexedAt': '2019-03-22T12:46:22.849Z',
+    'tech': ['google_apps', 'aws_route_53', 'contentful', 'zendesk', 'segment', 'mailgun', 'lever', 'customer_io', 'fullstory', 'facebook_advertiser', 'google_analytics', 'hotjar', 'adroll', 'satismeter', 'drift', 'google_tag_manager'],
+    'parent': {
+      'domain': None
+    }
+  }
+}

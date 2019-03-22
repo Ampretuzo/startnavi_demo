@@ -3,6 +3,7 @@ djangorestframework==3.9.2
 djangorestframework-simplejwt==4.1.0
 dry-rest-permissions==0.1.10 # I didn't need this library in this case, but I like it and with large CRUD applications it is VERY convenient
 djoser==1.5.0 # rest-auth is a safe choice but I just need a simple registration endpoint for this project
+clearbit==0.1.7
 
 # dev requirements:
 pip-tools==3.5.0
