@@ -32,3 +32,39 @@ class PostTests(APITestCase):
             self.post_create_url, {"title": "The Title", "text": "The Text"}
         )
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+
+class PostsReallySavedTests(APITestCase):
+    """This test needs separate class because there is not force_unauthenticate method provided"""
+
+    post_create_url = reverse("post-list")
+    post_list_url = reverse("post-list")
+
+    def setUp(self):
+        test_user = get_user_model().objects.get_or_create(username="testuser")[0]
+        test_user_profile = models.UserProfile.objects.create(user=test_user)
+        self.client.force_authenticate(user=test_user)
+        self.client.post(
+            self.post_create_url, {"title": "The Title 1", "text": "The Text 1"}
+        )
+        self.client.post(
+            self.post_create_url, {"title": "The Title 2", "text": "The Text 2"}
+        )
+
+    def test_both_posts_are_returned(self):
+        response = self.client.get(self.post_list_url)
+        self.assertEqual(2, len(response.data))
+
+    def test_titles_are_right(self):
+        response = self.client.get(self.post_list_url)
+        self.assertTrue("The Title " in response.data[0]["title"])
+        self.assertTrue("The Title " in response.data[1]["title"])
+
+    def test_texts_are_right(self):
+        response = self.client.get(self.post_list_url)
+        self.assertTrue("The Text " in response.data[0]["text"])
+        self.assertTrue("The Text " in response.data[1]["text"])
+
+    def test_creation_dates_are_right(self):
+        # TODO
+        pass
