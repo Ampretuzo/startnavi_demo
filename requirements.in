@@ -1,7 +1,9 @@
 Django==2.1.7
 djangorestframework==3.9.2
 djangorestframework-simplejwt==4.1.0
+dry-rest-permissions==0.1.10 # I didn't need this library in this case, but I like it and with large CRUD applications it is VERY convenient
 
 # dev requirements:
 pip-tools==3.5.0
 pre-commit==1.14.4
+pudb==2018.1

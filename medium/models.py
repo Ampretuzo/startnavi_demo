@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
 
+from .exceptions import PostAlreadyLiked, LikeNotFound
+
+
 class User(AbstractUser):
     class Meta:
         db_table = "medium_user"
@@ -20,6 +23,42 @@ class Post(models.Model):
     text = models.TextField()
     created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def like(self, user_profile):
+        if self.like_set.count() > 0:
+            raise PostAlreadyLiked()
+        self.like_set.create(user_profile=user_profile)
+
+    def unlike(self, user_profile):
+        if self.like_set.count() == 0:
+            raise LikeNotFound()
+        self.like_set.filter(user_profile=user_profile).delete()
+
+    @staticmethod
+    def has_read_permission(request):
+        return True
+
+    @staticmethod
+    def has_write_permission(request):
+        return True
+
+    @staticmethod
+    def has_create_permission(request):
+        return request.user.is_authenticated
+
+    @staticmethod
+    def has_like_permission(request):
+        return True
+
+    def has_object_like_permission(self, request):
+        return request.user.is_authenticated
+
+    @staticmethod
+    def has_unlike_permission(request):
+        return True
+
+    def has_object_unlike_permission(self, request):
+        return request.user.is_authenticated
 
     class Meta:
         db_table = "medium_post"
