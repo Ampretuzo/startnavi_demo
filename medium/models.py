@@ -21,6 +21,23 @@ class UserProfile(models.Model):
         db_table = "medium_user_profile"
 
 
+class UserEnrichmentData(models.Model):
+    """Contains some of the fields from clearbit enrichment"""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=256)
+    last_name = models.CharField(max_length=256)
+    country = models.CharField(max_length=256)
+    company_clearbit_id = models.CharField(max_length=64)
+    company_name = models.CharField(max_length=256)
+    company_legal_name = models.CharField(max_length=256)
+    company_domain = models.CharField(max_length=256)
+    company_employees_range = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "medium_user_enrichment_data"
+
+
 class Post(models.Model):
     title = models.CharField(max_length=256)
     text = models.TextField()
