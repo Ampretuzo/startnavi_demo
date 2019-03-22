@@ -81,10 +81,11 @@ class PostLikeTests(APITestCase):
         post = models.Post.objects.create(
             title="The Title 1", text="The Text 1", author=test_user_profile
         )
-        self.post_toggle_like_url = reverse("post-like", args=(post.id,))
+        self.post_like_url = reverse("post-like", args=(post.id,))
+        self.post_unlike_url = reverse("post-unlike", args=(post.id,))
 
-    def test_liking_post_with_unauthenticated_user_should_return_401(self):
-        response = self.client.post(self.post_toggle_like_url)
+    def test_liking_post_with_unauthenticated_user_should_return_4xx(self):
+        response = self.client.post(self.post_like_url)
         # TODO: specify only one acceptable status code later
         self.assertTrue(
             response.status_code
@@ -93,11 +94,38 @@ class PostLikeTests(APITestCase):
 
     def test_liking_post_with_authenticated_user_should_return_200(self):
         self.client.force_authenticate(user=self.test_user)
-        response = self.client.post(self.post_toggle_like_url)
+        response = self.client.post(self.post_like_url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
 
     def test_liking_post_second_time_should_return_400(self):
         self.client.force_authenticate(user=self.test_user)
-        self.client.post(self.post_toggle_like_url)
-        response = self.client.post(self.post_toggle_like_url)
+        self.client.post(self.post_like_url)
+        response = self.client.post(self.post_like_url)
         self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_unliking_post_with_unauthenticated_user_should_return_4xx(self):
+        response = self.client.post(self.post_unlike_url)
+        self.assertTrue(
+            response.status_code
+            in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        )
+
+    def test_unliking_not_yet_liked_post_with_authenticated_user_should_return_400(
+        self
+    ):
+        self.client.force_authenticate(user=self.test_user)
+        response = self.client.post(self.post_unlike_url)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_unliking_liked_post_with_authenticated_user_should_return_200(self):
+        self.client.force_authenticate(user=self.test_user)
+        self.client.post(self.post_like_url)
+        response = self.client.post(self.post_unlike_url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+    def test_liking_unliked_post_with_authenticated_user_should_return_200(self):
+        self.client.force_authenticate(user=self.test_user)
+        self.client.post(self.post_like_url)
+        self.client.post(self.post_unlike_url)
+        response = self.client.post(self.post_like_url)
+        self.assertEqual(status.HTTP_200_OK, response.status_code)

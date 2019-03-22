@@ -8,7 +8,7 @@ from dry_rest_permissions.generics import DRYPermissions
 
 from . import models
 from .serializers import PostSerializer
-from .exceptions import PostAlreadyLiked
+from .exceptions import PostAlreadyLiked, LikeNotFound
 
 
 class PostModelViewSet(viewsets.ModelViewSet):
@@ -30,7 +30,12 @@ class PostModelViewSet(viewsets.ModelViewSet):
     # @detail_route(methods=("POST",))
     def unlike(self, request, pk):
         post = self.get_object()
-        raise NotImplementedError("Unlike not implemented")
+        user = self.request.user
+        try:
+            post.unlike(user_profile=user.userprofile)
+        except LikeNotFound as not_yet_liked_exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response()
 
     def perform_create(self, serializer):
         user = self.request.user
