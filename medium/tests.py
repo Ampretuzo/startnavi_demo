@@ -129,3 +129,54 @@ class PostLikeTests(APITestCase):
         self.client.post(self.post_unlike_url)
         response = self.client.post(self.post_like_url)
         self.assertEqual(status.HTTP_200_OK, response.status_code)
+
+
+class RegistrationTestdrive(APITestCase):
+    """This is not a real test, I just made sure libraries are sort
+    of working"""
+
+    register_url = reverse("register")
+    token_obtain_pair_url = reverse("token_obtain_pair")
+
+    def test_registration_with_no_email_responds_with_400(self):
+        response = self.client.post(
+            self.register_url, {"username": "testuser", "password": "testuserpassword"}
+        )
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+
+    def test_registration_with_valid_data_responds_with_200(self):
+        response = self.client.post(
+            self.register_url,
+            {
+                "username": "testuser",
+                "password": "testuserpassword",
+                "email": "testuser@testdomain.com",
+            },
+        )
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+    def test_registered_user_can_get_jwt_token(self):
+        self.client.post(
+            self.register_url,
+            {
+                "username": "testuser",
+                "password": "testuserpassword",
+                "email": "testuser@testdomain.com",
+            },
+        )
+        response = self.client.post(
+            self.token_obtain_pair_url,
+            {"username": "testuser", "password": "testuserpassword"},
+        )
+        self.assertTrue("eyJ" in response.data["access"])
+
+    # def test_tmp(self):
+    #     self.client.post(
+    #         self.register_url,
+    #         {
+    #             "username": "testuser",
+    #             "password": "testuserpassword",
+    #             "email": "testuser@testdomain.com",
+    #         },
+    #     )
+    #     import pudb; pudb.set_trace()

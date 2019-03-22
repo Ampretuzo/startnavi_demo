@@ -1,12 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 from .exceptions import PostAlreadyLiked, LikeNotFound
 
 
 class User(AbstractUser):
+    email = models.EmailField(_("email address"), blank=False, unique=True)
+
     class Meta:
         db_table = "medium_user"
 
@@ -16,6 +19,23 @@ class UserProfile(models.Model):
 
     class Meta:
         db_table = "medium_user_profile"
+
+
+class UserEnrichmentData(models.Model):
+    """Contains some of the fields from clearbit enrichment"""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=256)
+    last_name = models.CharField(max_length=256)
+    country = models.CharField(max_length=256)
+    company_clearbit_id = models.CharField(max_length=64)
+    company_name = models.CharField(max_length=256)
+    company_legal_name = models.CharField(max_length=256)
+    company_domain = models.CharField(max_length=256)
+    company_employees_range = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "medium_user_enrichment_data"
 
 
 class Post(models.Model):
