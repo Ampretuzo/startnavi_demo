@@ -8,7 +8,9 @@ import configparser
 import requests
 import random
 import string
+import logging
 from itertools import chain
+
 
 from faker import Faker
 
@@ -24,23 +26,38 @@ class SimpleApiClient:
         return string.Template("Bearer $token").substitute(token=jwt_token)
 
     def register_user(self, user_registration_data):
+        logging.info("Registering %s", user_registration_data["username"])
         response = requests.post(
             self.url_base + "auth/register/", json=user_registration_data
         )
         if response.status_code == 201:
             return response.json()
+        logging.error(
+            "Could not register %s, the server responded with %i",
+            user_registration_data["username"],
+            response.status_code,
+        )
+        logging.error(response.json())
         raise Exception("Registration failed for some reason")
 
     def log_in(self, username, password):
+        logging.info("Logging in %s", username)
         response = requests.post(
             self.url_base + "auth/token/",
             json={"username": username, "password": password},
         )
         if response.status_code == 200:
             return response.json()
+        logging.error(
+            "Could not log in %s, the server responded with %i",
+            username,
+            response.status_code,
+        )
+        logging.error(response.json())
         raise Exception("Login failed for some reason")
 
     def create_post(self, title, text, jwt_token):
+        logging.info('Creating post "%s"', title)
         response = requests.post(
             self.url_base + "posts/",
             json={"title": title, "text": text},
@@ -48,9 +65,16 @@ class SimpleApiClient:
         )
         if response.status_code == 201:
             return response.json()
+        logging.error(
+            'Could not create post "%s", the server responded with %i',
+            title,
+            response.status_code,
+        )
+        logging.error(response.json())
         raise Exception("Creating post failed for some reason")
 
     def like_post(self, post_id_to_like, jwt_token):
+        logging.info("Like post #%i", post_id_to_like)
         relative_path = string.Template("posts/$post_id/like/").substitute(
             post_id=post_id_to_like
         )
@@ -60,6 +84,11 @@ class SimpleApiClient:
         )
         if response.status_code == 200:
             return
+        logging.error(
+            "Could not like post #%i, the server responded with %i",
+            post_id_to_like,
+            response.status_code,
+        )
         raise Exception("Could not like the post for some reason")
 
 
@@ -168,6 +197,8 @@ def run_automated_bot(
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser(description="Exersize medium REST API.")
     parser.add_argument("-cfg", "--config", default="medium_bot.sample.ini")
     args = parser.parse_args()
@@ -177,6 +208,12 @@ def main():
     number_of_users = int(config.get("Basic Params", "number_of_users"))
     max_posts_per_user = int(config.get("Basic Params", "max_posts_per_user"))
     max_likes_per_user = int(config.get("Basic Params", "max_likes_per_user"))
+    logging.info(
+        "Running the bot for the following configuration: users - %i, posts per user - %i, likes per user - %i",
+        number_of_users,
+        max_posts_per_user,
+        max_likes_per_user,
+    )
 
     run_automated_bot(
         Faker(),
@@ -185,6 +222,8 @@ def main():
         max_posts_per_user,
         max_likes_per_user,
     )
+
+    logging.info("Finished running automated bot")
 
 
 if __name__ == "__main__":
