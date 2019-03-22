@@ -27,11 +27,18 @@ class Post(models.Model):
 
     @staticmethod
     def has_write_permission(request):
-        return False
+        return True
 
     @staticmethod
     def has_create_permission(request):
         return request.user.is_authenticated
+
+    @staticmethod
+    def has_toggle_like_permission(request):
+        return True
+
+    def has_object_toggle_like_permission(self, request):
+        return False
 
     class Meta:
         db_table = "medium_post"

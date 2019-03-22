@@ -22,10 +22,12 @@ from medium import views as medium_views
 
 
 post_view = medium_views.PostModelViewSet.as_view({"get": "list", "post": "create"})
+like_view = medium_views.PostModelViewSet.as_view({"post": "toggle_like"})
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/posts/<int:pk>/like/", like_view, name="toggle-like"),
     path("api/posts/", post_view, name="post-list"),
 ]

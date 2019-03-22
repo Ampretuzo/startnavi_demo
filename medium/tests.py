@@ -68,3 +68,28 @@ class PostsReallySavedTests(APITestCase):
     def test_creation_dates_are_right(self):
         # TODO
         pass
+
+
+class PostLikeTests(APITestCase):
+
+    post_create_url = reverse("post-list")
+    post_list_url = reverse("post-list")
+
+    def setUp(self):
+        test_user = get_user_model().objects.get_or_create(username="testuser")[0]
+        test_user_profile = models.UserProfile.objects.create(user=test_user)
+        self.client.force_authenticate(user=test_user)
+        self.client.post(
+            self.post_create_url, {"title": "The Title 1", "text": "The Text 1"}
+        )
+        posts = self.client.get(self.post_list_url)
+        post_id = posts.data[0]["id"]
+        self.post_toggle_like_url = reverse("toggle-like", args=(post_id,))
+
+    def test_liking_post_with_unauthenticated_user_should_return_401(self):
+        response = self.client.post(self.post_toggle_like_url)
+        # TODO: specify only one acceptable status code later
+        self.assertTrue(
+            response.status_code
+            in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+        )
