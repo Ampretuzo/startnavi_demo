@@ -5,10 +5,16 @@ from django.utils.translation import gettext_lazy as _
 
 
 from .exceptions import PostAlreadyLiked, LikeNotFound
+from .validators import validate_email_via_emailhunter
 
 
 class User(AbstractUser):
-    email = models.EmailField(_("email address"), blank=False, unique=True)
+    email = models.EmailField(
+        _("email address"),
+        blank=False,
+        unique=True,
+        validators=(validate_email_via_emailhunter,),
+    )
 
     class Meta:
         db_table = "medium_user"
