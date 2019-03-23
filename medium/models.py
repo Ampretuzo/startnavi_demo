@@ -25,6 +25,7 @@ class UserEnrichmentData(models.Model):
     """Contains some of the fields from clearbit enrichment"""
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    enrichment_run = models.BooleanField(default=False)
     first_name = models.CharField(max_length=256)
     last_name = models.CharField(max_length=256)
     country = models.CharField(max_length=256)

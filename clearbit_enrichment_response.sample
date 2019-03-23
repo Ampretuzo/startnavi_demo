@@ -1,5 +1,5 @@
 >>> import clearbit
->>> clearbit.key = 'sk_5ff0b5996e406f86420effe7d8d00a18'
+>>> clearbit.key = '...'
 >>> response = clearbit.Enrichment.find(email='alex@clearbit.com', stream=True)
 
 {
