@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,6 +25,9 @@ SECRET_KEY = "zpfol173(u=17&@1y@=4v_$$oy(wvey&oo!ef0zt&i1)*(9pku"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+# Test mode hack - https://stackoverflow.com/a/11366998
+UNIT_TESTING = sys.argv[1:2] == ["test"]
 
 ALLOWED_HOSTS = []
 
@@ -129,3 +133,12 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     )
 }
+
+# Custom configuration
+
+if not UNIT_TESTING:
+    MEDIUM_CLEARBIT_API_KEY = os.environ.get("CLEARBIT_API_KEY")
+    MEDIUM_CLEARBIT_ENRICHMENT = os.environ.get("CLEARBIT_ENRICHMENT") == "1"
+else:
+    MEDIUM_CLEARBIT_API_KEY = "fake key"
+    MEDIUM_CLEARBIT_ENRICHMENT = True

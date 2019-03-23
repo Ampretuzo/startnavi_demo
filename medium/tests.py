@@ -1,3 +1,5 @@
+from unittest.mock import Mock, patch
+
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
@@ -170,13 +172,33 @@ class RegistrationTestdrive(APITestCase):
         )
         self.assertTrue("eyJ" in response.data["access"])
 
-    # def test_tmp(self):
-    #     self.client.post(
-    #         self.register_url,
-    #         {
-    #             "username": "testuser",
-    #             "password": "testuserpassword",
-    #             "email": "testuser@testdomain.com",
-    #         },
-    #     )
-    #     import pudb; pudb.set_trace()
+
+class ClearbitEnrichmentTests(APITestCase):
+
+    register_url = reverse("register")
+
+    @patch("clearbit.Enrichment.find")
+    def test_enrichment_basic_should_work(self, mock_enrichment_find):
+        mock_enrichment_find.return_value = {
+            "person": {"name": {"givenName": "Alex", "familyName": "McCaw"}}
+        }
+        self.client.post(
+            self.register_url,
+            {
+                "username": "testuser",
+                "password": "testuserpassword",
+                "email": "alex@clearbit.com",
+            },
+        )
+        ued = models.UserEnrichmentData.objects.all()[0]
+        self.assertTrue(ued.enrichment_run)
+        self.assertEqual(
+            mock_enrichment_find.return_value["person"]["name"]["givenName"],
+            ued.first_name,
+        )
+        self.assertEqual(
+            mock_enrichment_find.return_value["person"]["name"]["familyName"],
+            ued.last_name,
+        )
+        self.assertEqual("", ued.country)
+        mock_enrichment_find.assert_called_once()
