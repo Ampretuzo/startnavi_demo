@@ -204,3 +204,99 @@ class ClearbitEnrichmentTests(APITestCase):
         )
         self.assertEqual("", ued.country)
         mock_enrichment_find.assert_called_once()
+
+
+def mock_hunter_email_verifier_for_bad_email(self, email):
+    assert "hjasdf1234@41234.com" == email
+    return {
+        "result": "undeliverable",
+        "score": 14,
+        "email": "hjasdf1234@41234.com",
+        "regexp": True,
+        "gibberish": True,
+        "disposable": False,
+        "webmail": False,
+        "mx_records": False,
+        "smtp_server": False,
+        "smtp_check": False,
+        "accept_all": False,
+        "block": False,
+        "sources": [],
+    }
+
+
+def mock_hunter_email_verifier_for_good_email(self, email):
+    assert "steli@close.io" == email
+    return {
+        "result": "deliverable",
+        "score": 91,
+        "email": "steli@close.io",
+        "regexp": True,
+        "gibberish": False,
+        "disposable": False,
+        "webmail": False,
+        "mx_records": True,
+        "smtp_server": True,
+        "smtp_check": True,
+        "accept_all": False,
+        "block": False,
+        "sources": [
+            {
+                "domain": "blog.close.io",
+                "uri": "http://blog.close.io/how-to-become-great-at-sales",
+                "extracted_on": "2015-01-26",
+                "last_seen_on": "2017-02-25",
+                "still_on_page": True,
+            },
+            {
+                "domain": "blog.close.io",
+                "uri": "http://blog.close.io/how-to-do-referral-sales",
+                "extracted_on": "2015-01-26",
+                "last_seen_on": "2016-02-25",
+                "still_on_page": False,
+            },
+        ],
+    }
+
+
+class EmailhunterValidationTests(APITestCase):
+
+    register_url = reverse("register")
+    registration_data_with_bad_email = {
+        "username": "testuser",
+        "password": "testuserpassword",
+        "email": "hjasdf1234@41234.com",
+    }
+
+    def test_given_bad_email_disabled_validation_should_respond_with_201(self):
+        response = self.client.post(
+            self.register_url, self.registration_data_with_bad_email
+        )
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+    @patch(
+        "pyhunter.PyHunter.email_verifier", new=mock_hunter_email_verifier_for_bad_email
+    )
+    @override_settings(MEDIUM_EMAILHUNTER_VALIDATION=True)
+    def test_given_bad_email_enabled_validation_should_respond_with_400(self):
+        response = self.client.post(
+            self.register_url, self.registration_data_with_bad_email
+        )
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        self.assertTrue("email" in response.json())
+        self.assertTrue(
+            "trustworthy" in response.json()["email"][0]
+        )  # Ad hoc test before introducing proper response schema
+
+    @patch(
+        "pyhunter.PyHunter.email_verifier",
+        new=mock_hunter_email_verifier_for_good_email,
+    )
+    @override_settings(MEDIUM_EMAILHUNTER_VALIDATION=True)
+    def test_given_good_email_enabled_validation_should_respond_with_400(self):
+        registration_data_with_good_email = self.registration_data_with_bad_email.copy()
+        registration_data_with_good_email["email"] = "steli@close.io"
+        response = self.client.post(
+            self.register_url, registration_data_with_good_email
+        )
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
