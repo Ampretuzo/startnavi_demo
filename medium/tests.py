@@ -1,5 +1,6 @@
 from unittest.mock import Mock, patch
 
+from django.test import override_settings
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
@@ -173,6 +174,7 @@ class RegistrationTestdrive(APITestCase):
         self.assertTrue("eyJ" in response.data["access"])
 
 
+@override_settings(MEDIUM_CLEARBIT_ENRICHMENT=True)
 class ClearbitEnrichmentTests(APITestCase):
 
     register_url = reverse("register")

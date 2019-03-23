@@ -1,14 +1,15 @@
 from django.apps import AppConfig
-
-from .app_settings import MEDIUM_CLEARBIT_ENRICHMENT, MEDIUM_CLEARBIT_API_KEY
+from django.conf import settings
 
 
 class MediumConfig(AppConfig):
     name = "medium"
 
     def ready(self):
-        if MEDIUM_CLEARBIT_ENRICHMENT:
+        clearbit_api_key = getattr(settings, "MEDIUM_CLEARBIT_API_KEY", None)
+        clearbit_enrichment = getattr(settings, "MEDIUM_CLEARBIT_ENRICHMENT", False)
+        if clearbit_enrichment and clearbit_api_key:
             import clearbit
 
-            clearbit.key = MEDIUM_CLEARBIT_API_KEY
+            clearbit.key = clearbit_api_key
         import medium.signals

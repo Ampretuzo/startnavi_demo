@@ -140,5 +140,5 @@ if not UNIT_TESTING:
     MEDIUM_CLEARBIT_API_KEY = os.environ.get("CLEARBIT_API_KEY")
     MEDIUM_CLEARBIT_ENRICHMENT = os.environ.get("CLEARBIT_ENRICHMENT") == "1"
 else:
-    MEDIUM_CLEARBIT_API_KEY = "fake key"
-    MEDIUM_CLEARBIT_ENRICHMENT = True
+    MEDIUM_CLEARBIT_API_KEY = "fake key"  # Clearbit client should be mocked
+    MEDIUM_CLEARBIT_ENRICHMENT = False

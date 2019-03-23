@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.dispatch import receiver
 
 from djoser import signals as djoser_signals
@@ -5,7 +6,6 @@ from djoser import views as djoser_views
 import clearbit
 
 from . import models
-from .app_settings import MEDIUM_CLEARBIT_ENRICHMENT
 
 
 def _populate_enrichment_data(enrichment_data, clearbit_response):
@@ -34,7 +34,8 @@ def user_registered(user, request, **kwargs):
     """TODO: Celery Celery Celery Celery Celery Celery Celery Celery Celery
     Right now, I'm using blocking api for simplicity"""
     enrichment_data = models.UserEnrichmentData(user=user)
-    if not MEDIUM_CLEARBIT_ENRICHMENT:
+    clearbit_enrichment = getattr(settings, "MEDIUM_CLEARBIT_ENRICHMENT", False)
+    if not clearbit_enrichment:
         enrichment_data.enrichment_run = False
     else:
         email = user.email

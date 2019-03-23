@@ -1,7 +1,0 @@
-from django.conf import settings
-
-
-MEDIUM_CLEARBIT_API_KEY = getattr(settings, "MEDIUM_CLEARBIT_API_KEY", None)
-MEDIUM_CLEARBIT_ENRICHMENT = False
-if MEDIUM_CLEARBIT_API_KEY:
-    MEDIUM_CLEARBIT_ENRICHMENT = getattr(settings, "MEDIUM_CLEARBIT_ENRICHMENT", False)
