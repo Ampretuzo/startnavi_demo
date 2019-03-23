@@ -139,6 +139,11 @@ REST_FRAMEWORK = {
 if not UNIT_TESTING:
     MEDIUM_CLEARBIT_API_KEY = os.environ.get("CLEARBIT_API_KEY")
     MEDIUM_CLEARBIT_ENRICHMENT = os.environ.get("CLEARBIT_ENRICHMENT") == "1"
+    MEDIUM_EMAILHUNTER_API_KEY = os.environ.get("EMAILHUNTER_API_KEY")
+    MEDIUM_EMAILHUNTER_VALIDATION = os.environ.get("EMAILHUNTER_VALIDATION")
 else:
-    MEDIUM_CLEARBIT_API_KEY = "fake key"  # Clearbit client should be mocked
+    # Clearbit and emailhunter clients should be mocked
+    MEDIUM_CLEARBIT_API_KEY = "fake key"
     MEDIUM_CLEARBIT_ENRICHMENT = False
+    MEDIUM_EMAILHUNTER_API_KEY = "fake key"
+    MEDIUM_EMAILHUNTER_VALIDATION = False
