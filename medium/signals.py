@@ -12,19 +12,19 @@ def _populate_enrichment_data(enrichment_data, clearbit_response):
     if "person" in clearbit_response:
         person_data = clearbit_response["person"]
         if "name" in person_data:
-            enrichment_data.first_name = person_data["name"].get("givenName", "")
-            enrichment_data.last_name = person_data["name"].get("familyName", "")
+            enrichment_data.first_name = person_data["name"].get("givenName", "") or ""
+            enrichment_data.last_name = person_data["name"].get("familyName", "") or ""
         if "geo" in person_data:
-            enrichment_data.country = person_data["geo"].get("country", "")
+            enrichment_data.country = person_data["geo"].get("country", "") or ""
     if "company" in clearbit_response:
         company_data = clearbit_response["company"]
-        enrichment_data.company_clearbit_id = company_data.get("id", "")
-        enrichment_data.company_name = company_data.get("name", "")
-        enrichment_data.company_legal_name = company_data("legalName", "")
-        enrichment_data.company_domain = company_data.get("domain", "")
+        enrichment_data.company_clearbit_id = company_data.get("id", "") or ""
+        enrichment_data.company_name = company_data.get("name", "") or ""
+        enrichment_data.company_legal_name = company_data.get("legalName", "") or ""
+        enrichment_data.company_domain = company_data.get("domain", "") or ""
         if "metrics" in company_data:
-            enrichment_data.company_employees_range = company_data["metrics"].get(
-                "employeesRange", ""
+            enrichment_data.company_employees_range = (
+                company_data["metrics"].get("employeesRange", "") or ""
             )
 
 
